@@ -1,0 +1,7 @@
+secrets.json
+Homo.Api/
+obj/
+bin/
+appsettings.dev.json
+appsettings.staging.json
+appsettings.prod.json

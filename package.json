@@ -1,0 +1,11 @@
+{
+  "name": "auth-api",
+  "version": "1.0.0",
+  "description": "## Development",
+  "main": "index.js",
+  "scripts": {
+    "update-homo": "node ./homo-api-tools/update-homo.js"
+  },
+  "author": "",
+  "license": "ISC"
+}

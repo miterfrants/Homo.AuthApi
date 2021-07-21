@@ -1,0 +1,7 @@
+{
+    "hello": "Hello!",
+    "verify email": "Verify Email",
+    "verify link": "Verify Link {link}",
+    "reset email": "Reset Password Email Subject",
+    "reset link": "Reset Password Link: {link}"
+}

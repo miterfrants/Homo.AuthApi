@@ -12,6 +12,7 @@ namespace Homo.AuthApi
         public string Email { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime? DeletedAt { get; set; }
+        public DateTime? EditedAt { get; set; }
         public long? CreatedBy { get; set; }
         public long? EditedBy { get; set; }
         [MaxLength(512)]

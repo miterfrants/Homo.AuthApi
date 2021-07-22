@@ -136,5 +136,26 @@ namespace Homo.AuthApi
             return dbContext.User.Where(x => x.FbSubDeletionConfirmCode == confirmCode && x.DeletedAt == null).FirstOrDefault();
         }
 
+        public static void Update(DBContext dbContext, long id, DTOs.UpdateMe dto, long editedBy)
+        {
+            User record = dbContext.User.Where(x => x.Id == id).FirstOrDefault();
+            foreach (var propOfDTO in dto.GetType().GetProperties())
+            {
+                var value = propOfDTO.GetValue(dto);
+                try
+                {
+                    var prop = record.GetType().GetProperty(propOfDTO.Name);
+                    prop.SetValue(record, value);
+                }
+                catch (System.Exception ex)
+                {
+                    throw new Exception(propOfDTO.Name + ", " + ex.Message + "\r\n" + ex.StackTrace);
+                }
+            }
+            record.EditedAt = DateTime.Now;
+            record.EditedBy = editedBy;
+            dbContext.SaveChanges();
+        }
+
     }
 }

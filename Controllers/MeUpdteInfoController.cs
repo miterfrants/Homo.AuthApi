@@ -1,8 +1,6 @@
-﻿using System.Net;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Homo.Core.Constants;
-using Homo.Core.Helpers;
 
 namespace Homo.AuthApi
 {
@@ -24,6 +22,7 @@ namespace Homo.AuthApi
         [HttpPatch]
         public dynamic updateInfo([FromBody] DTOs.UpdateMe dto, DTOs.JwtExtraPayload extraPayload)
         {
+            UserDataservice.Update(_dbContext, extraPayload.Id, dto, extraPayload.Id);
             return new { status = CUSTOM_RESPONSE.OK };
         }
     }

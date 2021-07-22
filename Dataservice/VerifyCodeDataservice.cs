@@ -44,17 +44,6 @@ namespace Homo.AuthApi
                 .Count();
         }
 
-        // public static VerifyCode GetLatestOneByPhone(string phone, string code, DBContext dbContext)
-        // {
-
-        //     return dbContext.VerifyCode
-        //         .Where(
-        //             x => x.Phone == phone &&
-        //             x.Expiration >= DateTime.Now &&
-        //             x.IsUsed == true
-        //         ).OrderByDescending(x => x.CreatedAt).FirstOrDefault();
-        // }
-
         public static VerifyCode GetOneUnUsedByEmail(DBContext dbContext, string email, string code)
         {
             return dbContext.VerifyCode
@@ -66,7 +55,18 @@ namespace Homo.AuthApi
                 ).OrderByDescending(x => x.CreatedAt).FirstOrDefault();
         }
 
-        public static VerifyCode Create(DTOs.VerifyCode dto, DBContext dbContext)
+        public static VerifyCode GetOneUnUsedByPhone(DBContext dbContext, string phone, string code)
+        {
+            return dbContext.VerifyCode
+                .Where(
+                    x => x.Email == phone
+                    && x.Code == code
+                    && x.Expiration >= DateTime.Now
+                    && (x.IsUsed == null || x.IsUsed == false)
+                ).OrderByDescending(x => x.CreatedAt).FirstOrDefault();
+        }
+
+        public static VerifyCode Create(DBContext dbContext, DTOs.VerifyCode dto)
         {
             VerifyCode record = new VerifyCode();
             foreach (var propOfDTO in dto.GetType().GetProperties())

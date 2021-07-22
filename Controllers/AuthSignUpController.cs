@@ -132,13 +132,7 @@ namespace Homo.AuthApi
         [HttpPost]
         public async Task<dynamic> sendVerifyEmail([FromBody] DTOs.SendValidatedEmail dto)
         {
-            string ip = Request.Headers["X-Real-IP"];
-
-            if (ip == null)
-            {
-                ip = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
-            }
-
+            string ip = NetworkHelper.GetIpFromRequest(Request);
             int countByIp = VerifyCodeDataservice.GetTodayCountByIp(_dbContext, ip);
             if (countByIp > 10)
             {
@@ -161,19 +155,20 @@ namespace Homo.AuthApi
             }
 
             string code = CryptographicHelper.GetSpecificLengthRandomString(6, true, true);
-            VerifyCodeDataservice.Create(new DTOs.VerifyCode()
+            VerifyCodeDataservice.Create(_dbContext, new DTOs.VerifyCode()
             {
                 Email = dto.Email,
                 Code = code,
-                Expiration = DateTime.Now.AddSeconds(60),
+                Expiration = DateTime.Now.AddSeconds(3 * 60),
                 Ip = ip
-            }, _dbContext);
+            });
 
             await MailHelper.Send(MailProvider.SEND_GRID, new MailTemplate()
             {
                 Subject = _commonLocalizer.Get("verify email"),
                 Content = _commonLocalizer.Get("verify link", null, new Dictionary<string, string>() {
-                    { "link", $"{_websiteEndpoint}/auth/verify-email" }
+                    { "link", $"{_websiteEndpoint}/auth/verify-email" },
+                    { "code", code }
                 })
             }, _systemEmail, dto.Email, _sendGridAPIKey);
             return new { status = CUSTOM_RESPONSE.OK };

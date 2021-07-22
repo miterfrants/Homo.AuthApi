@@ -5,3 +5,4 @@ bin/
 appsettings.dev.json
 appsettings.staging.json
 appsettings.prod.json
+secrets/

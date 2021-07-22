@@ -44,6 +44,22 @@ namespace Homo.AuthApi
             public bool? IsSubscription { get; set; }
             public DateTime? Birthday { get; set; }
         }
-    }
 
+
+        public partial class SendSms
+        {
+            [MaxLength(20)]
+            public string Phone { get; set; }
+        }
+
+        public partial class VerifyPhone
+        {
+            [MaxLength(20)]
+            [Required]
+            public string Phone { get; set; }
+            [MaxLength(6)]
+            [Required]
+            public string Code { get; set; }
+        }
+    }
 }

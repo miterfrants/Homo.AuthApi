@@ -157,5 +157,16 @@ namespace Homo.AuthApi
             dbContext.SaveChanges();
         }
 
+        public static void UpdatePhone(DBContext dbContext, long id, string encryptPhone, string pseudonymousPhone, long editedBy)
+        {
+            User record = new User() { Id = id };
+            dbContext.Attach(record);
+            record.EncryptPhone = encryptPhone;
+            record.PseudonymousPhone = pseudonymousPhone;
+            record.EditedAt = DateTime.Now;
+            record.EditedBy = editedBy;
+            dbContext.SaveChanges();
+        }
+
     }
 }

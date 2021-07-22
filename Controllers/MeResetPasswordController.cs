@@ -12,12 +12,10 @@ namespace Homo.AuthApi
     {
 
         private readonly DBContext _dbContext;
-        private readonly string _jwtKey;
         public MeResetPasswordController(DBContext dbContext, IOptions<AppSettings> appSettings, Microsoft.AspNetCore.Hosting.IWebHostEnvironment env)
         {
             Secrets secrets = (Secrets)appSettings.Value.Secrets;
             Common common = (Common)appSettings.Value.Common;
-            _jwtKey = secrets.JwtKey;
             _dbContext = dbContext;
         }
 

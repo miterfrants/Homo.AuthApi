@@ -72,12 +72,5 @@ namespace Homo.AuthApi
             [Required]
             public string signed_request { get; set; }
         }
-
-        public class VerifyPhoneCode
-        {
-            [Required]
-            [MaxLength(6)]
-            public string Code { get; set; }
-        }
     }
 }

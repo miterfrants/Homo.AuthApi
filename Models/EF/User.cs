@@ -24,11 +24,10 @@ namespace Homo.AuthApi
         public bool? IsManager { get; set; }
         [MaxLength(128)]
         public string Username { get; set; }
-        public DateTime? UpdatedAt { get; set; }
         [MaxLength(512)]
         public string Profile { get; set; }
         [MaxLength(128)]
-        public string FbSub { get; set; }
+        public string FacebookSub { get; set; }
         [MaxLength(128)]
         public string LineSub { get; set; }
         [MaxLength(128)]

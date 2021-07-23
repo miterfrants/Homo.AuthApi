@@ -4,8 +4,14 @@
   "description": "## Development",
   "main": "index.js",
   "scripts": {
-    "update-homo": "node ./homo-api-tools/update-homo.js"
+    "init": "node ./tools/initialize.js"
   },
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "eslint": "^7.31.0",
+    "inquirer": "^8.1.2",
+    "randomstring": "^1.2.1",
+    "standard": "^16.0.3"
+  }
 }

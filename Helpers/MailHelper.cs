@@ -76,19 +76,11 @@ namespace Homo.AuthApi
                         }
 
                     };
-                    try
-                    {
-                        Console.WriteLine("Sending email using Amazon SES...");
-                        SendEmailResponse response = await client.SendEmailAsync(sendRequest);
-                        bodyObj = response.ResponseMetadata;
-                        Console.WriteLine("The email was sent successfully.");
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine("The email was not sent.");
-                        Console.WriteLine("Error message: " + ex.Message);
-                        throw ex;
-                    }
+                    Console.WriteLine("Sending email using Amazon SES...");
+                    SendEmailResponse response = await client.SendEmailAsync(sendRequest);
+                    bodyObj = response.ResponseMetadata;
+                    Console.WriteLine("The email was sent successfully.");
+
                 }
 
             }

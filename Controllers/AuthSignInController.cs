@@ -87,7 +87,7 @@ namespace Homo.AuthApi
                 LastName = user.LastName,
                 County = user.County,
                 City = user.City,
-                FbSub = user.FbSub,
+                FacebookSub = user.FacebookSub,
                 GoogleSub = user.GoogleSub,
                 LineSub = user.LineSub,
                 Profile = user.Profile,
@@ -117,8 +117,22 @@ namespace Homo.AuthApi
         {
             oAuthResp authResp = null;
             UserInfo userInfo = null;
-            authResp = await FacebookOAuthHelper.GetAccessToken(_fbAppId, dto.RedirectUri, _fbClientSecret, dto.Code);
-            userInfo = await FacebookOAuthHelper.GetUserInfo(authResp.access_token);
+            if (dto.Provider == SocialMediaProvider.FACEBOOK)
+            {
+                authResp = await FacebookOAuthHelper.GetAccessToken(_fbAppId, dto.RedirectUri, _fbClientSecret, dto.Code);
+                userInfo = await FacebookOAuthHelper.GetUserInfo(authResp.access_token);
+            }
+            else if (dto.Provider == SocialMediaProvider.LINE)
+            {
+                authResp = await LineOAuthHelper.GetAccessToken(_lineClientId, dto.RedirectUri, _lineClientSecret, dto.Code);
+                userInfo = LineOAuthHelper.GetUserInfo(authResp.id_token);
+            }
+            else if (dto.Provider == SocialMediaProvider.GOOGLE)
+            {
+                authResp = await GoogleOAuthHelper.GetAccessToken(_googleClientId, dto.RedirectUri, _googleClientSecret, dto.Code);
+                userInfo = await GoogleOAuthHelper.GetUserInfo(authResp.access_token);
+            }
+
             if (userInfo.sub == null)
             {
                 throw new CustomException(ERROR_CODE.INVALID_CODE_FROM_SOCIAL_MEDIA, HttpStatusCode.BadRequest);
@@ -150,7 +164,7 @@ namespace Homo.AuthApi
                 LastName = user.LastName,
                 County = user.County,
                 City = user.City,
-                FbSub = user.FbSub,
+                FacebookSub = user.FacebookSub,
                 GoogleSub = user.GoogleSub,
                 LineSub = user.LineSub,
                 Profile = user.Profile,

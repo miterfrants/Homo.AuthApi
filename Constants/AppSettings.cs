@@ -19,8 +19,8 @@
         public string LineClientSecret { get; set; }
         public string SmsUsername { get; set; }
         public string SmsPassword { get; set; }
-        public string SmsClientUrl { get; set; }
-        public string Pkcs1PublicKeyPath { get; set; }
+
+
     }
 
     public class Common : Homo.Api.ICommon
@@ -33,5 +33,7 @@
         public string GoogleClientId { get; set; }
         public string LineClientId { get; set; }
         public bool AuthByCookie { get; set; }
+        public string Pkcs1PublicKeyPath { get; set; }
+        public string SmsClientUrl { get; set; }
     }
 }

@@ -4,5 +4,6 @@
     "UNAUTH_ACCESS_API": "you could not access api",
     "INVALID_FORM": "invalid form",
     "GGGG": "testing GGGG",
-    "SIGNIN_FAILED": "Email Or Password Failed"
+    "SIGNIN_FAILED": "Email Or Password Failed",
+    "USER_BE_BLOCKED": "User had be blocked"
 }

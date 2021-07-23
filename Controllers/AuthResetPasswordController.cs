@@ -15,7 +15,6 @@ namespace Homo.AuthApi
 
         private readonly DBContext _dbContext;
         private readonly string _resetPasswordJwtKey;
-        private readonly string _frontEndURL;
         private readonly CommonLocalizer _commonLocalizer;
         private readonly string _websiteEndpoint;
         private readonly string _systemEmail;

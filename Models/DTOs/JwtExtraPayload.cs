@@ -10,7 +10,7 @@ namespace Homo.AuthApi
             public string LastName { get; set; }
             public string County { get; set; }
             public string City { get; set; }
-            public string FbSub { get; set; }
+            public string FacebookSub { get; set; }
             public string GoogleSub { get; set; }
             public string LineSub { get; set; }
             public string Profile { get; set; }

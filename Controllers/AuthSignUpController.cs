@@ -53,26 +53,26 @@ namespace Homo.AuthApi
         [Route("sign-up")]
         [AuthorizeFactory(AUTH_TYPE.SIGN_UP)]
         [HttpPost]
-        public ActionResult<dynamic> signUp([FromBody] DTOs.SignUp dto, dynamic extraPayload)
+        public ActionResult<dynamic> signUp([FromBody] DTOs.SignUp dto, DTOs.JwtExtraPayload extraPayload)
         {
             User newUser = null;
             User user = null;
             SocialMediaProvider? socialMediaProvider = null;
             string sub = null;
-            if (extraPayload.facebookSub != null)
+            if (extraPayload.FacebookSub != null)
             {
                 socialMediaProvider = SocialMediaProvider.FACEBOOK;
-                sub = extraPayload.facebookSub.Value;
+                sub = extraPayload.FacebookSub;
             }
-            else if (extraPayload.googleSub != null)
+            else if (extraPayload.GoogleSub != null)
             {
                 socialMediaProvider = SocialMediaProvider.GOOGLE;
-                sub = extraPayload.googleSub.Value;
+                sub = extraPayload.GoogleSub;
             }
-            else if (extraPayload.lineSub != null)
+            else if (extraPayload.LineSub != null)
             {
                 socialMediaProvider = SocialMediaProvider.LINE;
-                sub = extraPayload.lineSub.Value;
+                sub = extraPayload.LineSub;
             }
 
             if (socialMediaProvider == null)
@@ -89,13 +89,13 @@ namespace Homo.AuthApi
 
             if (sub != null)
             {
-                newUser = UserDataservice.SignUpWithSocialMedia(_dbContext, socialMediaProvider.GetValueOrDefault(), extraPayload.facebookSub.Value, extraPayload.email.Value, extraPayload.name.Value, extraPayload.profile.Value, dto.FirstName, dto.LastName, dto.Birthday);
+                newUser = UserDataservice.SignUpWithSocialMedia(_dbContext, socialMediaProvider.GetValueOrDefault(), sub, extraPayload.Email, $"{extraPayload.LastName} {extraPayload.FirstName}", extraPayload.Profile, extraPayload.FirstName, extraPayload.LastName, dto.Birthday);
             }
             else
             {
                 string salt = CryptographicHelper.GetSalt(64);
                 string hash = CryptographicHelper.GenerateSaltedHash(dto.Password, salt);
-                newUser = UserDataservice.SignUp(_dbContext, extraPayload.email.Value, dto.Password, dto.FirstName, dto.LastName, salt, hash, dto.Birthday);
+                newUser = UserDataservice.SignUp(_dbContext, extraPayload.Email, dto.Password, dto.FirstName, dto.LastName, salt, hash, dto.Birthday);
             }
 
             var userPayload = new
@@ -214,7 +214,7 @@ namespace Homo.AuthApi
                 else if (dto.Provider == SocialMediaProvider.LINE)
                 {
                     authResp = await LineOAuthHelper.GetAccessToken(_lineClientId, dto.RedirectUri, _lineClientSecret, dto.Code);
-                    userInfo = await LineOAuthHelper.GetUserInfo(authResp.access_token);
+                    userInfo = LineOAuthHelper.GetUserInfo(authResp.id_token);
                     provider = SocialMediaProvider.LINE;
                 }
                 user = UserDataservice.GetOneBySocialMediaSub(_dbContext, provider.GetValueOrDefault(), userInfo.sub);

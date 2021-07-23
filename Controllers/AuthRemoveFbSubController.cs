@@ -29,7 +29,7 @@ namespace Homo.AuthApi
         public ActionResult<dynamic> tracking([FromQuery] string confirmCode)
         {
             User user = UserDataservice.GetOneByConfirmCode(confirmCode, _dbContext);
-            if (user.FbSub == null || user.FbSub == "")
+            if (user.FacebookSub == null || user.FacebookSub == "")
             {
                 return new
                 {

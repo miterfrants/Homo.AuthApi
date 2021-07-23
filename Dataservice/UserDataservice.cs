@@ -1,7 +1,6 @@
 using System;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
-using Homo.Core.Helpers;
 
 namespace Homo.AuthApi
 {
@@ -34,7 +33,7 @@ namespace Homo.AuthApi
             return dbContext.User.Where(
                 x =>
                 (
-                    (provider == SocialMediaProvider.FACEBOOK && x.FbSub == sub)
+                    (provider == SocialMediaProvider.FACEBOOK && x.FacebookSub == sub)
                     || (provider == SocialMediaProvider.GOOGLE && x.GoogleSub == sub)
                     || (provider == SocialMediaProvider.LINE && x.LineSub == sub)
                 )
@@ -53,10 +52,11 @@ namespace Homo.AuthApi
                 LastName = lastName,
                 Profile = picture,
                 Birthday = birthday,
+                Status = true
             };
             if (provider == SocialMediaProvider.FACEBOOK)
             {
-                newUser.FbSub = sub;
+                newUser.FacebookSub = sub;
             }
             else if (provider == SocialMediaProvider.GOOGLE)
             {
@@ -123,11 +123,11 @@ namespace Homo.AuthApi
 
         public static void RemoveFbSub(DBContext dbContext, string fbSub, string confirmCode)
         {
-            User user = dbContext.User.Where(x => x.FbSub == fbSub && x.DeletedAt == null).FirstOrDefault();
-            user.FbSub = null;
+            User user = dbContext.User.Where(x => x.FacebookSub == fbSub && x.DeletedAt == null).FirstOrDefault();
+            user.FacebookSub = null;
             user.FbSubDeletionConfirmCode = confirmCode;
             user.EditedBy = 0;
-            user.UpdatedAt = DateTime.Now;
+            user.EditedAt = DateTime.Now;
             dbContext.SaveChanges();
         }
 

@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Mvc.Filters;
-using System;
 using System.Security.Claims;
 using System.Net;
 using Homo.Core.Constants;

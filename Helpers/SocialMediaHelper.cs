@@ -11,6 +11,7 @@ namespace Homo.AuthApi
         LINE,
         GOOGLE
     }
+
     public class FacebookOAuthHelper
     {
         public static async Task<oAuthResp> GetAccessToken(string appId, string redirectURI, string clientSecret, string code)
@@ -68,12 +69,9 @@ namespace Homo.AuthApi
             }
         }
 
-        public static async Task<UserInfo> GetUserInfo(string accessToken)
+        public static UserInfo GetUserInfo(string idToken)
         {
-            HttpClient http = new HttpClient();
-            HttpResponseMessage responseOfUserInfo = await http.GetAsync($"https://api.line.me/v2/bot/profile/?access_token={accessToken}");
-            string resultOfUserInfo = await responseOfUserInfo.Content.ReadAsStringAsync();
-            return JsonConvert.DeserializeObject<UserInfo>(resultOfUserInfo);
+            return JWTHelper.DecodeToken<UserInfo>(idToken);
         }
 
     }

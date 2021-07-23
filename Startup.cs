@@ -45,6 +45,7 @@ namespace Homo.AuthApi
             {
                 string[] crossOrigins = stringCrossOrigins.Split(",");
                 Console.WriteLine(Newtonsoft.Json.JsonConvert.SerializeObject(crossOrigins));
+
                 services.AddCors(options =>
                 {
                     options.AddPolicy(AllowSpecificOrigins,
@@ -64,7 +65,6 @@ namespace Homo.AuthApi
             services.AddSingleton<ValidationLocalizer>(new ValidationLocalizer(appSettings.Common.LocalizationResourcesPath));
             var serverVersion = new MySqlServerVersion(new Version(8, 0, 25));
             var secrets = (Secrets)appSettings.Secrets;
-            System.Console.WriteLine(secrets.DBConnectionString);
             services.AddDbContext<DBContext>(options => options.UseMySql(secrets.DBConnectionString, serverVersion));
             services.AddControllers();
 

@@ -7,15 +7,19 @@ namespace Homo.AuthApi
         public static Dictionary<string, string> GetDuplicatedUserType(User user)
         {
             Dictionary<string, string> duplicatedUserList = new Dictionary<string, string>();
-            if (user.FbSub != null)
+            if (user.FacebookSub != null)
             {
                 duplicatedUserList.Add("facebook", user.Email);
             }
             if (user.LineSub != null)
             {
+                duplicatedUserList.Add("line", user.Email);
+            }
+            if (user.GoogleSub != null)
+            {
                 duplicatedUserList.Add("google", user.Email);
             }
-            if (user.FbSub == null && user.LineSub == null)
+            if (user.FacebookSub == null && user.LineSub == null && user.GoogleSub == null)
             {
                 duplicatedUserList.Add("origin", user.Email);
             }

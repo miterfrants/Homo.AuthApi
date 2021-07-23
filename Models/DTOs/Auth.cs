@@ -48,7 +48,6 @@ namespace Homo.AuthApi
             public SocialMediaProvider Provider { get; set; }
             [Required]
             public string Code { get; set; }
-
             [Required]
             public string RedirectUri { get; set; }
         }

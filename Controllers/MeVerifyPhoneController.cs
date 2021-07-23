@@ -28,8 +28,9 @@ namespace Homo.AuthApi
             _dbContext = dbContext;
             _smsUsername = secrets.SmsUsername;
             _smsPassword = secrets.SmsPassword;
-            _smsClientUrl = secrets.SmsClientUrl;
-            _pkcs1PublicKeyPath = secrets.Pkcs1PublicKeyPath;
+            _smsClientUrl = common.SmsClientUrl;
+            _pkcs1PublicKeyPath = common.Pkcs1PublicKeyPath;
+            _commonLocalizer = localizer;
         }
 
         [HttpPost]

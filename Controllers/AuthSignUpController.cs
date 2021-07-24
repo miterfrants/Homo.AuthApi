@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Net;
 using System.Threading.Tasks;
 using System.Collections.Generic;
@@ -17,6 +17,7 @@ namespace Homo.AuthApi
         private readonly Homo.Api.CommonLocalizer _commonLocalizer;
         private readonly DBContext _dbContext;
         private readonly string _jwtKey;
+        private readonly string _signUpJwtKey;
         private readonly int _jwtExpirationMonth;
         private readonly string _envName;
         private readonly string _sendGridAPIKey;
@@ -36,6 +37,7 @@ namespace Homo.AuthApi
             _commonLocalizer = commonLocalizer;
             _jwtKey = secrets.SignUpJwtKey;
             _jwtExpirationMonth = common.JwtExpirationMonth;
+            _signUpJwtKey = secrets.SignUpJwtKey;
             _dbContext = dbContext;
             _envName = env.EnvironmentName;
             _sendGridAPIKey = secrets.SendGridApiKey;
@@ -89,7 +91,7 @@ namespace Homo.AuthApi
 
             if (sub != null)
             {
-                newUser = UserDataservice.SignUpWithSocialMedia(_dbContext, socialMediaProvider.GetValueOrDefault(), sub, extraPayload.Email, $"{extraPayload.LastName} {extraPayload.FirstName}", extraPayload.Profile, extraPayload.FirstName, extraPayload.LastName, dto.Birthday);
+                newUser = UserDataservice.SignUpWithSocialMedia(_dbContext, socialMediaProvider.GetValueOrDefault(), sub, extraPayload.Email, null, extraPayload.Profile, extraPayload.FirstName, extraPayload.LastName, dto.Birthday);
             }
             else
             {
@@ -98,13 +100,21 @@ namespace Homo.AuthApi
                 newUser = UserDataservice.SignUp(_dbContext, extraPayload.Email, dto.Password, dto.FirstName, dto.LastName, salt, hash, dto.Birthday);
             }
 
-            var userPayload = new
+            var userPayload = new DTOs.JwtExtraPayload()
             {
-                id = newUser.Id,
-                email = newUser.Email,
-                firstname = newUser.FirstName,
-                lastname = newUser.LastName,
-                profile = newUser.Profile
+                Id = newUser.Id,
+                Email = newUser.Email,
+                FirstName = newUser.FirstName,
+                LastName = newUser.LastName,
+                County = newUser.County,
+                City = newUser.City,
+                FacebookSub = newUser.FacebookSub,
+                GoogleSub = newUser.GoogleSub,
+                LineSub = newUser.LineSub,
+                Profile = newUser.Profile,
+                PseudonymousHomePhone = newUser.PseudonymousHomePhone,
+                PseudonymousPhone = newUser.PseudonymousPhone,
+                PseudonymousAddress = newUser.PseudonymousAddress
             };
             string token = JWTHelper.GenerateToken(_jwtKey, _jwtExpirationMonth * 30 * 24 * 60, userPayload);
 
@@ -116,12 +126,7 @@ namespace Homo.AuthApi
             {
                 return new
                 {
-                    id = newUser.Id,
-                    email = newUser.Email,
-                    firstname = newUser.FirstName,
-                    lastname = newUser.LastName,
-                    profile = newUser.Profile,
-                    token = token
+                    Token = token
                 };
             }
 
@@ -185,7 +190,7 @@ namespace Homo.AuthApi
             }
             record.IsUsed = true;
             _dbContext.SaveChanges();
-            return new { token = JWTHelper.GenerateToken(_jwtKey, 5, new { email = record.Email }) };
+            return new { token = JWTHelper.GenerateToken(_signUpJwtKey, 5, new { email = record.Email }) };
         }
 
         [Route("auth-with-social-media")]
@@ -242,15 +247,15 @@ namespace Homo.AuthApi
             string token = "";
             if (dto.Provider == SocialMediaProvider.FACEBOOK)
             {
-                token = JWTHelper.GenerateToken(_jwtKey, 5, new { email = userInfo.email, facebookSub = userInfo.sub, name = userInfo.name, profile = userInfo.picture });
+                token = JWTHelper.GenerateToken(_signUpJwtKey, 5, new DTOs.JwtExtraPayload { Email = userInfo.email, FacebookSub = userInfo.sub, FirstName = userInfo.name, LastName = userInfo.name, Profile = userInfo.picture });
             }
             else if (dto.Provider == SocialMediaProvider.GOOGLE)
             {
-                token = JWTHelper.GenerateToken(_jwtKey, 5, new { email = userInfo.email, googleSub = userInfo.sub, name = userInfo.name, profile = userInfo.picture });
+                token = JWTHelper.GenerateToken(_signUpJwtKey, 5, new DTOs.JwtExtraPayload { Email = userInfo.email, GoogleSub = userInfo.sub, FirstName = userInfo.name, LastName = userInfo.name, Profile = userInfo.picture });
             }
             else if (dto.Provider == SocialMediaProvider.LINE)
             {
-                token = JWTHelper.GenerateToken(_jwtKey, 5, new { email = userInfo.email, lineSub = userInfo.sub, name = userInfo.name, profile = userInfo.picture });
+                token = JWTHelper.GenerateToken(_signUpJwtKey, 5, new DTOs.JwtExtraPayload { Email = userInfo.email, LineSub = userInfo.sub, FirstName = userInfo.name, LastName = userInfo.name, Profile = userInfo.picture });
             }
 
             return new { token = token };

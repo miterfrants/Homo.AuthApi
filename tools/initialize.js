@@ -33,6 +33,7 @@ const randomstring = require('randomstring');
     exec('dotnet ef database update');
 
     // build rsa key for protect sensitive information
+    console.log('create rsa key');
     if (!fs.existsSync('./secrets')) {
         fs.mkdirSync('./secrets');
     }
@@ -40,6 +41,12 @@ const randomstring = require('randomstring');
     exec('openssl rsa -in ./secrets/key.pem -out ./secrets/key.pub -pubout -outform pem');
     exec('openssl rsa -pubin -in ./secrets/key.pub -RSAPublicKey_out -outform dem > ./secrets/key.pub.der');
     exec('openssl rsa -in ./secrets/key.pem -outform dem > ./secrets/key.der');
+
+    // remove template file
+    console.log('remove template file');
+    fs.unlinkSync('./secrets.template.json');
+    fs.unlinkSync('./appsettings.template.json');
+
     console.log('initialize finish');
 
     // run api server and dev-front-end-server

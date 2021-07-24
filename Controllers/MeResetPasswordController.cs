@@ -1,4 +1,4 @@
-﻿using System.Net;
+using System.Net;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Homo.Core.Constants;
@@ -20,9 +20,9 @@ namespace Homo.AuthApi
         }
 
         [HttpPatch]
-        public dynamic resetPassword([FromBody] DTOs.ResetMyPassword dto, dynamic extraPayload)
+        public dynamic resetPassword([FromBody] DTOs.ResetMyPassword dto, DTOs.JwtExtraPayload extraPayload)
         {
-            long userId = (long)extraPayload.userId.Value;
+            long userId = (long)extraPayload.Id;
             User user = UserDataservice.GetOne(_dbContext, userId, true);
             bool isEmailAccount = user.Hash != null && user.Hash.Length > 0;
 

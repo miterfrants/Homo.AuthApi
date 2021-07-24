@@ -47,7 +47,7 @@ namespace Homo.AuthApi
             return JsonConvert.DeserializeObject<T>(JsonConvert.SerializeObject(handler.ReadJwtToken(token).Payload));
         }
 
-        public static dynamic GetExtraPayload(string key, string token)
+        public static DTOs.JwtExtraPayload GetExtraPayload(string key, string token)
         {
             try
             {
@@ -65,7 +65,7 @@ namespace Homo.AuthApi
                 ClaimsPrincipal payload = tokenHandler.ValidateToken(token,
                     parameters, out securityToken);
 
-                return JsonConvert.DeserializeObject(payload.FindFirstValue("extra"));
+                return JsonConvert.DeserializeObject<DTOs.JwtExtraPayload>(payload.FindFirstValue("extra"));
             }
             catch (SystemException)
             {
@@ -102,12 +102,17 @@ namespace Homo.AuthApi
         {
             string token = "";
             Request.Cookies.TryGetValue("token", out token);
-            dynamic extraPayload = JWTHelper.GetExtraPayload(key, token);
+            if (token == null || token == "")
+            {
+                string authorization = Request.Headers["Authorization"];
+                token = authorization.Substring("Bearer ".Length).Trim();
+            }
+            DTOs.JwtExtraPayload extraPayload = JWTHelper.GetExtraPayload(key, token);
             if (extraPayload == null)
             {
                 return null;
             }
-            return (long?)extraPayload.userId;
+            return (long?)extraPayload.Id;
         }
     }
 }

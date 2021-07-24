@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Homo.AuthApi
 {
@@ -22,7 +22,11 @@ namespace Homo.AuthApi
                 Id = user.Id,
                 FirstName = user.FirstName,
                 LastName = user.LastName,
-                Email = user.Email
+                Email = user.Email,
+                Profile = user.Profile,
+                PseudonymousAddress = user.PseudonymousAddress,
+                PseudonymousHomePhone = user.PseudonymousHomePhone,
+                PseudonymousPhone = user.PseudonymousPhone
             };
         }
     }

@@ -30,7 +30,6 @@ namespace Homo.AuthApi
             {
                 throw new CustomException(ERROR_CODE.TOKEN_EXPIRED, HttpStatusCode.Unauthorized);
             }
-
             ClaimsPrincipal payload = JWTHelper.GetPayload(_jwtKey, token);
             if (payload == null)
             {

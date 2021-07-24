@@ -1,4 +1,4 @@
-﻿using System.Threading.Tasks;
+using System.Threading.Tasks;
 using System.Net;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
@@ -41,7 +41,7 @@ namespace Homo.AuthApi
                 throw new CustomException(ERROR_CODE.USER_NOT_FOUND, HttpStatusCode.NotFound);
             }
             UserDataservice.SetUserToForgotPasswordState(_dbContext, user.Id);
-            string resetPasswordToken = JWTHelper.GenerateToken(_resetPasswordJwtKey, 10, new { userId = user.Id });
+            string resetPasswordToken = JWTHelper.GenerateToken(_resetPasswordJwtKey, 10, new { Id = user.Id });
             await MailHelper.Send(MailProvider.SEND_GRID, new MailTemplate()
             {
                 Subject = _commonLocalizer.Get("reset email"),
@@ -57,7 +57,8 @@ namespace Homo.AuthApi
         public dynamic resetPassword([FromBody] DTOs.ResetPassword dto)
         {
             var extraPayload = JWTHelper.GetExtraPayload(_resetPasswordJwtKey, dto.Token);
-            long userId = (long)extraPayload.userId.Value;
+            long userId = (long)extraPayload.Id;
+            System.Console.WriteLine(userId);
             User user = UserDataservice.GetOne(_dbContext, userId, true);
             string salt = CryptographicHelper.GetSalt(64);
             string hash = CryptographicHelper.GenerateSaltedHash(dto.Password, salt);

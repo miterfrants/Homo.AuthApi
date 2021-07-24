@@ -16,7 +16,7 @@
     <IsPackable>true</IsPackable>
   </PropertyGroup>
   <ItemGroup>
-    <Content Include="**\*" Exclude="**\bin\**;**\obj\**;**\node_modules\**;**\secrets.json;**\appsettings.dev.json;**\secrets\**;**\.git\**"/>
+    <Content Include="**\*" Exclude="**\bin\**;**\obj\**;**\node_modules\**;**\secrets.json;**\appsettings.dev.json;**\appsettings.json;**\secrets\**;**\.git\**"/>
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="5.0.7"/>
@@ -31,5 +31,6 @@
     <PackageReference Include="SendGrid" Version="9.24.0"/>
     <PackageReference Include="AWSSDK.SimpleEmailV2" Version="3.7.0.40"/>
     <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0"/>
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="5.6.3"/>
   </ItemGroup>
 </Project>

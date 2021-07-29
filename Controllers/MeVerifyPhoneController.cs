@@ -46,6 +46,9 @@ namespace Homo.AuthApi
                 Ip = NetworkHelper.GetIpFromRequest(Request)
             });
             string message = _commonLocalizer.Get("sms template", null, new Dictionary<string, string>() { { "code", code } });
+            System.Console.WriteLine(_smsUsername);
+            System.Console.WriteLine(_smsPassword);
+            System.Console.WriteLine(_smsClientUrl);
             await SmsHelper.Send(_smsUsername, _smsPassword, _smsClientUrl, dto.Phone, message);
             return new { status = CUSTOM_RESPONSE.OK };
         }

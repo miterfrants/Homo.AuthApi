@@ -35,7 +35,7 @@ namespace Homo.AuthApi
             Secrets secrets = (Secrets)appSettings.Value.Secrets;
             Common common = (Common)appSettings.Value.Common;
             _commonLocalizer = commonLocalizer;
-            _jwtKey = secrets.SignUpJwtKey;
+            _jwtKey = secrets.JwtKey;
             _jwtExpirationMonth = common.JwtExpirationMonth;
             _signUpJwtKey = secrets.SignUpJwtKey;
             _dbContext = dbContext;
@@ -77,7 +77,7 @@ namespace Homo.AuthApi
                 sub = extraPayload.LineSub;
             }
 
-            if (socialMediaProvider == null)
+            if (socialMediaProvider != null)
             {
                 user = UserDataservice.GetOneBySocialMediaSub(_dbContext, socialMediaProvider.GetValueOrDefault(), sub);
             }

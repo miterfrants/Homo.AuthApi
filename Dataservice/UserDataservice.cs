@@ -136,7 +136,7 @@ namespace Homo.AuthApi
             return dbContext.User.Where(x => x.FbSubDeletionConfirmCode == confirmCode && x.DeletedAt == null).FirstOrDefault();
         }
 
-        public static void Update(DBContext dbContext, long id, DTOs.UpdateMe dto, long editedBy)
+        public static void Update(DBContext dbContext, long id, DTOs.UpdateMePseudonymous dto, long editedBy)
         {
             User record = dbContext.User.Where(x => x.Id == id).FirstOrDefault();
             foreach (var propOfDTO in dto.GetType().GetProperties())

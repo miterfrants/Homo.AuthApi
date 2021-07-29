@@ -59,7 +59,7 @@ namespace Homo.AuthApi
         {
             return dbContext.VerifyCode
                 .Where(
-                    x => x.Email == phone
+                    x => x.Phone == phone
                     && x.Code == code
                     && x.Expiration >= DateTime.Now
                     && (x.IsUsed == null || x.IsUsed == false)

@@ -16,12 +16,9 @@ namespace Homo.AuthApi
         public partial class UpdateMe
         {
             [MaxLength(20)]
-            public string Phone { get; set; }
-            [MaxLength(20)]
             public string HomePhone { get; set; }
             public string Address { get; set; }
 
-            [Required]
             [MaxLength(64)]
             public string Email { get; set; }
             [MaxLength(512)]
@@ -40,6 +37,28 @@ namespace Homo.AuthApi
             [MaxLength(64)]
             public string City { get; set; }
             [MaxLength(10)]
+            public string Zip { get; set; }
+            public bool? IsSubscription { get; set; }
+            public DateTime? Birthday { get; set; }
+        }
+
+        public partial class UpdateMePseudonymous
+        {
+
+            public string PseudonymousHomePhone { get; set; }
+            public string PseudonymousAddress { get; set; }
+            public string EncryptHomePhone { get; set; }
+            public string EncryptAddress { get; set; }
+            public string Email { get; set; }
+            public string Profile { get; set; }
+
+            public string FirstName { get; set; }
+
+            public string LastName { get; set; }
+            public byte? Gender { get; set; }
+
+            public string County { get; set; }
+            public string City { get; set; }
             public string Zip { get; set; }
             public bool? IsSubscription { get; set; }
             public DateTime? Birthday { get; set; }

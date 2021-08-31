@@ -4,7 +4,7 @@
     <PackageType>Template</PackageType>
     <PackageId>Homo.AuthApi</PackageId>
     <VersionPrefix>5.0.0</VersionPrefix>
-    <VersionSuffix>alpha.7</VersionSuffix>
+    <VersionSuffix>alpha.8</VersionSuffix>
     <PackageTags>dotnet-new;templates;api</PackageTags>
     <Title>Homo Authorize Api</Title>
     <Authors>Peter Huang</Authors>

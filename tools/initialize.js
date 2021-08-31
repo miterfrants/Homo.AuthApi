@@ -8,7 +8,7 @@ const path = require('path');
 
 (async () => {
     await installHomoApi();
-    if(process.env.PACK_ONLY === 'true') {
+    if (process.env.PACK_ONLY === 'true') {
         return;
     }
     // build secrets.json
@@ -24,7 +24,7 @@ const path = require('path');
         fs.writeFileSync('./secrets.json', JSON.stringify(config, null, 4));
     }
     // build appsettings.json
-    if (!fs.existsSync('.appsettings.json')) {
+    if (!fs.existsSync('./appsettings.json')) {
         const appsettingsRaw = JSON.parse(fs.readFileSync(path.join(__dirname, '../appsettings.template.json')).toString());
         const common = appsettingsRaw.Config.Common;
         const answersForCommon = await promptQuestion(common);
@@ -38,8 +38,11 @@ const path = require('path');
 
     // resotre database from ef
     console.log('resotre database from ef');
-    execSync('dotnet ef migrations add InitialCreate');
-    execSync('dotnet ef database update');
+    if (fs.existsSync('./Migrations')) {
+        fs.rmSync('./Migrations', { recursive: true, force: true });
+    }
+    execSync('dotnet ef migrations add InitialCreate --context DBContext');
+    execSync('dotnet ef database update --context DBContext');
 
     // build rsa key for protect sensitive information
     console.log('create rsa key');
@@ -53,11 +56,10 @@ const path = require('path');
 
     // remove template file
     console.log('remove template file');
-    // fs.unlinkSync(path.join(__dirname, '../secrets.template.json'));
-    // fs.unlinkSync(path.join(__dirname, '../appsettings.template.json'));
+    fs.unlinkSync(path.join(__dirname, '../secrets.template.json'));
+    fs.unlinkSync(path.join(__dirname, '../appsettings.template.json'));
 
-    console.log('initialize finish');
-
+    console.log('initialize auth api finish');
     // run api server and dev-front-end-server
     // exec('dotnet watch run --launch-profile dev');
     // exec('cd ./tools/dev-front-end-server && npm install && node server.js');
@@ -96,7 +98,7 @@ function installHomoApi () {
         });
     };
     return new Promise((resolve, reject) => {
-        exec('dotnet new -u Homo.Api && dotnet nuget locals all --clear && dotnet new -i Homo.Api::5.0.5-alpha.2 && dotnet new homo-api -o Homo.Api && dotnet restore', (error, stdout, stderr) => {
+        exec(`dotnet new -u Homo.Api && dotnet nuget locals all --clear && dotnet new -i Homo.Api::5.0.5-alpha.2 && rm -rf ${path.join(__dirname, '../Homo.Api')} && dotnet new homo-api -o ${path.join(__dirname, '../Homo.Api')} && dotnet restore`, (error, stdout, stderr) => {
             if (error) {
                 throw error;
             }

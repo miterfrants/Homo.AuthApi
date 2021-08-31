@@ -1,51 +1,60 @@
+const { exec, execSync } = require('child_process');
+execSync('npm i');
+
 const fs = require('fs');
-const { exec } = require('child_process');
 const inquirer = require('inquirer');
 const randomstring = require('randomstring');
+const path = require('path');
 
 (async () => {
     await installHomoApi();
+    if(process.env.PACK_ONLY === 'true') {
+        return;
+    }
     // build secrets.json
-    const secrets = JSON.parse(fs.readFileSync('secrets.template.json').toString()).Config.Secrets;
-    const answersForSecrets = await promptQuestion(secrets);
-    for (const key in answersForSecrets) {
-        if (!answersForSecrets[key] && key.endsWith('Key')) {
-            answersForSecrets[key] = randomstring.generate(32);
+    if (!fs.existsSync('./secrets.json')) {
+        const secrets = JSON.parse(fs.readFileSync(path.join(__dirname, '../secrets.template.json')).toString()).Config.Secrets;
+        const answersForSecrets = await promptQuestion(secrets);
+        for (const key in answersForSecrets) {
+            if (!answersForSecrets[key] && key.endsWith('Key')) {
+                answersForSecrets[key] = randomstring.generate(32);
+            }
         }
+        const config = { Config: { Secrets: answersForSecrets } };
+        fs.writeFileSync('./secrets.json', JSON.stringify(config, null, 4));
     }
-    const config = { Config: { Secrets: answersForSecrets } };
-    fs.writeFileSync('./secrets.json', JSON.stringify(config, null, 4));
     // build appsettings.json
-    const appsettingsRaw = JSON.parse(fs.readFileSync('appsettings.template.json').toString());
-    const common = appsettingsRaw.Config.Common;
-    const answersForCommon = await promptQuestion(common);
-    for (const key in appsettingsRaw.Config.Common) {
-        if (answersForCommon[key]) {
-            appsettingsRaw.Config.Common[key] = answersForCommon[key];
+    if (!fs.existsSync('.appsettings.json')) {
+        const appsettingsRaw = JSON.parse(fs.readFileSync(path.join(__dirname, '../appsettings.template.json')).toString());
+        const common = appsettingsRaw.Config.Common;
+        const answersForCommon = await promptQuestion(common);
+        for (const key in appsettingsRaw.Config.Common) {
+            if (answersForCommon[key]) {
+                appsettingsRaw.Config.Common[key] = answersForCommon[key];
+            }
         }
+        fs.writeFileSync('./appsettings.json', JSON.stringify(appsettingsRaw, null, 4));
     }
-    fs.writeFileSync('./appsettings.json', JSON.stringify(appsettingsRaw, null, 4));
 
     // resotre database from ef
     console.log('resotre database from ef');
-    exec('dotnet ef migrations add InitialCreate');
-    await new Promise(resolve => setTimeout(resolve, 3000));
-    exec('dotnet ef database update');
+    execSync('dotnet ef migrations add InitialCreate');
+    execSync('dotnet ef database update');
 
     // build rsa key for protect sensitive information
     console.log('create rsa key');
     if (!fs.existsSync('./secrets')) {
         fs.mkdirSync('./secrets');
     }
-    exec('openssl genrsa -out ./secrets/key.pem 4096');
-    exec('openssl rsa -in ./secrets/key.pem -out ./secrets/key.pub -pubout -outform pem');
-    exec('openssl rsa -pubin -in ./secrets/key.pub -RSAPublicKey_out -outform dem > ./secrets/key.pub.der');
-    exec('openssl rsa -in ./secrets/key.pem -outform dem > ./secrets/key.der');
+    execSync('openssl genrsa -out ./secrets/key.pem 4096');
+    execSync('openssl rsa -in ./secrets/key.pem -out ./secrets/key.pub -pubout -outform pem');
+    execSync('openssl rsa -pubin -in ./secrets/key.pub -RSAPublicKey_out -outform dem > ./secrets/key.pub.der');
+    execSync('openssl rsa -in ./secrets/key.pem -outform dem > ./secrets/key.der');
 
     // remove template file
     console.log('remove template file');
-    fs.unlinkSync('./secrets.template.json');
-    fs.unlinkSync('./appsettings.template.json');
+    // fs.unlinkSync(path.join(__dirname, '../secrets.template.json'));
+    // fs.unlinkSync(path.join(__dirname, '../appsettings.template.json'));
 
     console.log('initialize finish');
 
@@ -57,10 +66,14 @@ const randomstring = require('randomstring');
 async function promptQuestion (keys) {
     const arrayOfSecrets = [];
     for (const key in keys) {
+        let defaultValue = keys[key];
+        if (defaultValue === '') {
+            defaultValue = (key.endsWith('Key') ? 'random' : 'empty string');
+        }
         arrayOfSecrets.push({
             type: 'input',
             name: key,
-            message: `what is ur ${key}`
+            message: `what is ur ${key} (${defaultValue})`
         });
     }
 
@@ -91,20 +104,19 @@ function installHomoApi () {
                 throw error;
             }
             resolve();
-            console.log(`stdout: ${stdout}`);
         });
     }).then(() => {
-        fs.rmSync('./Homo.Api/Properties', { recursive: true, force: true });
-        fs.rmSync('./Homo.Api/Localization/Common', { recursive: true, force: true });
-        fs.rmSync('./Homo.Api/Localization/Error', { recursive: true, force: true });
-        fs.rmSync('./Homo.Api/Localization/Validation', { recursive: true, force: true });
-        fs.unlinkSync('./Homo.Api/api.csproj');
-        fs.unlinkSync('./Homo.Api/appsettings.dev.json');
-        fs.unlinkSync('./Homo.Api/appsettings.json');
-        fs.unlinkSync('./Homo.Api/appsettings.staging.json');
-        fs.unlinkSync('./Homo.Api/appsettings.prod.json');
-        fs.unlinkSync('./Homo.Api/package-lock.json');
-        fs.unlinkSync('./Homo.Api/Program.cs');
-        fs.unlinkSync('./Homo.Api/Startup.cs');
+        fs.rmSync(path.join(__dirname, '../Homo.Api/Properties'), { recursive: true, force: true });
+        fs.rmSync(path.join(__dirname, '../Homo.Api/Localization/Common'), { recursive: true, force: true });
+        fs.rmSync(path.join(__dirname, '../Homo.Api/Localization/Error'), { recursive: true, force: true });
+        fs.rmSync(path.join(__dirname, '../Homo.Api/Localization/Validation'), { recursive: true, force: true });
+        fs.unlinkSync(path.join(__dirname, '../Homo.Api/api.csproj'));
+        fs.unlinkSync(path.join(__dirname, '../Homo.Api/appsettings.dev.json'));
+        fs.unlinkSync(path.join(__dirname, '../Homo.Api/appsettings.json'));
+        fs.unlinkSync(path.join(__dirname, '../Homo.Api/appsettings.staging.json'));
+        fs.unlinkSync(path.join(__dirname, '../Homo.Api/appsettings.prod.json'));
+        fs.unlinkSync(path.join(__dirname, '../Homo.Api/package-lock.json'));
+        fs.unlinkSync(path.join(__dirname, '../Homo.Api/Program.cs'));
+        fs.unlinkSync(path.join(__dirname, '../Homo.Api/Startup.cs'));
     });
 }

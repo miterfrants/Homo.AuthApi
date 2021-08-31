@@ -5,5 +5,7 @@ bin/
 appsettings.dev.json
 appsettings.staging.json
 appsettings.prod.json
+appsettings.json
 secrets/
 node_modules
+Migrations/

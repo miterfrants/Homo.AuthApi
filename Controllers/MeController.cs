@@ -25,7 +25,6 @@ namespace Homo.AuthApi
                 Email = user.Email,
                 Profile = user.Profile,
                 PseudonymousAddress = user.PseudonymousAddress,
-                PseudonymousHomePhone = user.PseudonymousHomePhone,
                 PseudonymousPhone = user.PseudonymousPhone
             };
         }

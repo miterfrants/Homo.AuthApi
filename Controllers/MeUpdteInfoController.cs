@@ -36,10 +36,10 @@ namespace Homo.AuthApi
                 }
             }
 
-            if (!String.IsNullOrEmpty(dto.HomePhone))
+            if (!String.IsNullOrEmpty(dto.Phone))
             {
-                pseudonymousDto.EncryptHomePhone = CryptographicHelper.GetRSAEncryptResult(_PKCS1PublicKeyPath, dto.HomePhone);
-                pseudonymousDto.PseudonymousHomePhone = CryptographicHelper.GetHiddenString(dto.HomePhone, 2, 2);
+                pseudonymousDto.EncryptPhone = CryptographicHelper.GetRSAEncryptResult(_PKCS1PublicKeyPath, dto.Phone);
+                pseudonymousDto.PseudonymousPhone = CryptographicHelper.GetHiddenString(dto.Phone, 2, 2);
             }
 
             if (!String.IsNullOrEmpty(dto.Address))

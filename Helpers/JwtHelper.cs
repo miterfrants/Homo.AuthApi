@@ -9,7 +9,7 @@ namespace Homo.AuthApi
 {
     public class JWTHelper
     {
-        public static string GenerateToken(string key, int expirationMinutes = 1, dynamic extraPayload = null)
+        public static string GenerateToken(string key, int expirationMinutes = 1, dynamic extraPayload = null, string[] roles = null)
         {
             var expirationTime = DateTime.Now.ToUniversalTime().AddMinutes(expirationMinutes);
             Int32 unixTimestamp = (Int32)(expirationTime.Subtract(new DateTime(1970, 1, 1))).TotalSeconds;
@@ -21,7 +21,10 @@ namespace Homo.AuthApi
 
             var header = new JwtHeader(signingCredentials);
 
-            var payload = new JwtPayload { { "extra", extraPayload }, { "exp", unixTimestamp },
+            var payload = new JwtPayload {
+                { "extra", extraPayload }
+                , { "exp", unixTimestamp }
+                , {"roles", roles}
             };
 
             var secretToken = new JwtSecurityToken(header, payload);

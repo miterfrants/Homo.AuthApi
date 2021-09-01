@@ -1,6 +1,7 @@
 using System.Net;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Homo.Core.Constants;
@@ -91,11 +92,15 @@ namespace Homo.AuthApi
                 GoogleSub = user.GoogleSub,
                 LineSub = user.LineSub,
                 Profile = user.Profile,
-                PseudonymousHomePhone = user.PseudonymousHomePhone,
                 PseudonymousPhone = user.PseudonymousPhone,
                 PseudonymousAddress = user.PseudonymousAddress
             };
-            string token = JWTHelper.GenerateToken(_jwtKey, _jwtExpirationMonth * 30 * 24 * 60, extraPayload);
+
+            List<ViewRelationOfGroupAndUser> permissions = RelationOfGroupAndUserDataservice.GetRelationByUserId(_dbContext, user.Id);
+            System.Console.WriteLine($"testing:{Newtonsoft.Json.JsonConvert.SerializeObject(permissions, Newtonsoft.Json.Formatting.Indented)}");
+            string[] roles = permissions.SelectMany(x => Newtonsoft.Json.JsonConvert.DeserializeObject<string[]>(x.Roles)).ToArray();
+
+            string token = JWTHelper.GenerateToken(_jwtKey, _jwtExpirationMonth * 30 * 24 * 60, extraPayload, roles);
             if (_authByCookie)
             {
                 Response.Cookies.Append("token", token, AuthHelper.GetSecureCookieOptions());
@@ -168,10 +173,13 @@ namespace Homo.AuthApi
                 GoogleSub = user.GoogleSub,
                 LineSub = user.LineSub,
                 Profile = user.Profile,
-                PseudonymousHomePhone = user.PseudonymousHomePhone,
                 PseudonymousPhone = user.PseudonymousPhone,
                 PseudonymousAddress = user.PseudonymousAddress
             };
+
+            List<ViewRelationOfGroupAndUser> permissions = RelationOfGroupAndUserDataservice.GetRelationByUserId(_dbContext, user.Id);
+            string[] roles = permissions.SelectMany(x => Newtonsoft.Json.JsonConvert.DeserializeObject<string[]>(x.Roles)).ToArray();
+
             string token = JWTHelper.GenerateToken(_jwtKey, _jwtExpirationMonth * 30 * 24 * 60, extraPayload);
             if (_authByCookie)
             {

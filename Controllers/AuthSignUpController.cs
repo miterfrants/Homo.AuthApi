@@ -2,6 +2,7 @@ using System;
 using System.Net;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 
@@ -112,10 +113,13 @@ namespace Homo.AuthApi
                 GoogleSub = newUser.GoogleSub,
                 LineSub = newUser.LineSub,
                 Profile = newUser.Profile,
-                PseudonymousHomePhone = newUser.PseudonymousHomePhone,
                 PseudonymousPhone = newUser.PseudonymousPhone,
                 PseudonymousAddress = newUser.PseudonymousAddress
             };
+
+            List<ViewRelationOfGroupAndUser> permissions = RelationOfGroupAndUserDataservice.GetRelationByUserId(_dbContext, newUser.Id);
+            string[] roles = permissions.SelectMany(x => Newtonsoft.Json.JsonConvert.DeserializeObject<string[]>(x.Roles)).ToArray();
+
             string token = JWTHelper.GenerateToken(_jwtKey, _jwtExpirationMonth * 30 * 24 * 60, userPayload);
 
             if (_authByCookie)
@@ -245,17 +249,20 @@ namespace Homo.AuthApi
                         });
             }
             string token = "";
+            List<ViewRelationOfGroupAndUser> permissions = RelationOfGroupAndUserDataservice.GetRelationByUserId(_dbContext, user.Id);
+            string[] roles = permissions.SelectMany(x => Newtonsoft.Json.JsonConvert.DeserializeObject<string[]>(x.Roles)).ToArray();
+
             if (dto.Provider == SocialMediaProvider.FACEBOOK)
             {
-                token = JWTHelper.GenerateToken(_signUpJwtKey, 5, new DTOs.JwtExtraPayload { Email = userInfo.email, FacebookSub = userInfo.sub, FirstName = userInfo.name, LastName = userInfo.name, Profile = userInfo.picture });
+                token = JWTHelper.GenerateToken(_signUpJwtKey, 5, new DTOs.JwtExtraPayload { Email = userInfo.email, FacebookSub = userInfo.sub, FirstName = userInfo.name, LastName = userInfo.name, Profile = userInfo.picture }, roles);
             }
             else if (dto.Provider == SocialMediaProvider.GOOGLE)
             {
-                token = JWTHelper.GenerateToken(_signUpJwtKey, 5, new DTOs.JwtExtraPayload { Email = userInfo.email, GoogleSub = userInfo.sub, FirstName = userInfo.name, LastName = userInfo.name, Profile = userInfo.picture });
+                token = JWTHelper.GenerateToken(_signUpJwtKey, 5, new DTOs.JwtExtraPayload { Email = userInfo.email, GoogleSub = userInfo.sub, FirstName = userInfo.name, LastName = userInfo.name, Profile = userInfo.picture }, roles);
             }
             else if (dto.Provider == SocialMediaProvider.LINE)
             {
-                token = JWTHelper.GenerateToken(_signUpJwtKey, 5, new DTOs.JwtExtraPayload { Email = userInfo.email, LineSub = userInfo.sub, FirstName = userInfo.name, LastName = userInfo.name, Profile = userInfo.picture });
+                token = JWTHelper.GenerateToken(_signUpJwtKey, 5, new DTOs.JwtExtraPayload { Email = userInfo.email, LineSub = userInfo.sub, FirstName = userInfo.name, LastName = userInfo.name, Profile = userInfo.picture }, roles);
             }
 
             return new { token = token };

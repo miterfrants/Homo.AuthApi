@@ -52,11 +52,8 @@ namespace Homo.AuthApi
         [MaxLength(32)]
         public string FbSubDeletionConfirmCode { get; set; }
         [MaxLength(20)]
-        public string PseudonymousHomePhone { get; set; }
-        [MaxLength(20)]
         public string PseudonymousPhone { get; set; }
         public string PseudonymousAddress { get; set; }
-        public string EncryptHomePhone { get; set; }
         public string EncryptPhone { get; set; }
         public string EncryptAddress { get; set; }
     }

@@ -14,6 +14,8 @@ namespace Homo.AuthApi
         public DBContext(DbContextOptions<DBContext> options) : base(options) { }
         public virtual DbSet<User> User { get; set; }
         public virtual DbSet<VerifyCode> VerifyCode { get; set; }
+        public virtual DbSet<RelationOfGroupAndUser> RelationOfGroupAndUser { get; set; }
+        public virtual DbSet<Group> Group { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

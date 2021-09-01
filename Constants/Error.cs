@@ -14,5 +14,6 @@ namespace Homo.AuthApi
         public static string REMOVE_FB_SUB_INVALID_CODE = "REMOVE_FB_SUB_INVALID_CODE";
         public static string WRONG_PASSWORD = "WRONG_PASSWORD";
         public static string SMS_ERROR = "SMS_ERROR";
+        public static string DATA_NOT_FOUND = "DATA_NOT_FOUND";
     }
 }

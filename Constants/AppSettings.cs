@@ -1,4 +1,4 @@
-﻿namespace Homo.AuthApi
+namespace Homo.AuthApi
 {
     public class AppSettings : Homo.Api.IAppSettings
     {

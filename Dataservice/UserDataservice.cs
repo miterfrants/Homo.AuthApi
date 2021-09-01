@@ -1,11 +1,49 @@
 using System;
 using System.Linq;
+using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 
 namespace Homo.AuthApi
 {
     public class UserDataservice
     {
+
+        public static List<User> GetList(DBContext dbContext, int page, int limit, string email, List<long> userIds)
+        {
+            return dbContext.User
+                .Where(
+                    x => x.DeletedAt == null
+                    && (email == null || x.Email.Contains(email))
+                    && (userIds == null || userIds.Contains(x.Id))
+                )
+                .OrderByDescending(x => x.Id)
+                .Skip(limit * (page - 1))
+                .Take(limit)
+                .ToList();
+        }
+
+        public static int GetRowNums(DBContext dbContext, string email, List<long> userIds)
+        {
+            return dbContext.User
+                .Where(
+                    x => x.DeletedAt == null
+                    && (email == null || x.Email.Contains(email))
+                    && (userIds == null || userIds.Contains(x.Id))
+                )
+                .Count();
+        }
+
+        public static List<User> GetAllByIds(List<long> userIds, DBContext dbContext)
+        {
+            return dbContext.User
+                .Where(
+                    x => x.DeletedAt == null &&
+                    (userIds == null || userIds.Contains(x.Id))
+                )
+                .OrderByDescending(x => x.Id)
+                .ToList();
+        }
+
         public static User GetOne(DBContext dbContext, long id, bool asNoTracking = false)
         {
             DbSet<User> dbSet = dbContext.User;
@@ -164,6 +202,26 @@ namespace Homo.AuthApi
             record.EncryptPhone = encryptPhone;
             record.PseudonymousPhone = pseudonymousPhone;
             record.EditedAt = DateTime.Now;
+            record.EditedBy = editedBy;
+            dbContext.SaveChanges();
+        }
+
+        public static void BatchDelete(DBContext dbContext, long editedBy, List<long> ids)
+        {
+            foreach (int id in ids)
+            {
+                User record = new User { Id = id };
+                dbContext.Attach<User>(record);
+                record.DeletedAt = DateTime.Now;
+                record.EditedBy = editedBy;
+            }
+            dbContext.SaveChanges();
+        }
+
+        public static void Delete(DBContext dbContext, long id, long editedBy)
+        {
+            User record = dbContext.User.Where(x => x.Id == id).FirstOrDefault();
+            record.DeletedAt = DateTime.Now;
             record.EditedBy = editedBy;
             dbContext.SaveChanges();
         }

@@ -17,11 +17,11 @@ namespace Homo.AuthApi
         [HttpGet]
         public ActionResult<dynamic> getList([FromQuery] string name, [FromQuery] int page = 1, [FromQuery] int limit = 20)
         {
-            List<Group> records = GroupDataService.GetList(_dbContext, page, limit, name);
+            List<Group> records = GroupDataservice.GetList(_dbContext, page, limit, name);
             return new
             {
                 groups = records,
-                rowNums = GroupDataService.GetRowNum(_dbContext, name)
+                rowNums = GroupDataservice.GetRowNum(_dbContext, name)
             };
         }
 
@@ -29,14 +29,14 @@ namespace Homo.AuthApi
         [Route("all")]
         public ActionResult<dynamic> getAll([FromQuery] string name)
         {
-            return GroupDataService.GetAll(_dbContext, name);
+            return GroupDataservice.GetAll(_dbContext, name);
         }
 
         [HttpPost]
         public ActionResult<dynamic> create([FromBody] DTOs.Group dto, DTOs.JwtExtraPayload extraPayload)
         {
             long createdBy = extraPayload.Id;
-            Group rewRecord = GroupDataService.Create(_dbContext, createdBy, dto);
+            Group rewRecord = GroupDataservice.Create(_dbContext, createdBy, dto);
             return rewRecord;
         }
 
@@ -44,7 +44,7 @@ namespace Homo.AuthApi
         public ActionResult<dynamic> batchDelete([FromBody] List<long?> ids, DTOs.JwtExtraPayload extraPayload)
         {
             long editedBy = extraPayload.Id;
-            GroupDataService.BatchDelete(_dbContext, editedBy, ids);
+            GroupDataservice.BatchDelete(_dbContext, editedBy, ids);
             return new { status = CUSTOM_RESPONSE.OK };
         }
 
@@ -52,7 +52,7 @@ namespace Homo.AuthApi
         [Route("{id}")]
         public ActionResult<dynamic> get([FromRoute] int id)
         {
-            Group record = GroupDataService.GetOne(_dbContext, id);
+            Group record = GroupDataservice.GetOne(_dbContext, id);
             if (record == null)
             {
                 throw new CustomException(ERROR_CODE.DATA_NOT_FOUND, System.Net.HttpStatusCode.NotFound);
@@ -65,7 +65,7 @@ namespace Homo.AuthApi
         public ActionResult<dynamic> update([FromRoute] int id, [FromBody] DTOs.Group dto, DTOs.JwtExtraPayload extraPayload)
         {
             long editedBy = extraPayload.Id;
-            GroupDataService.Update(_dbContext, id, editedBy, dto);
+            GroupDataservice.Update(_dbContext, id, editedBy, dto);
             return new { status = CUSTOM_RESPONSE.OK };
         }
 
@@ -74,7 +74,7 @@ namespace Homo.AuthApi
         public ActionResult<dynamic> delete([FromRoute] long id, DTOs.JwtExtraPayload extraPayload)
         {
             long editedBy = extraPayload.Id;
-            GroupDataService.Delete(_dbContext, id, editedBy);
+            GroupDataservice.Delete(_dbContext, id, editedBy);
             return new { status = CUSTOM_RESPONSE.OK };
         }
     }

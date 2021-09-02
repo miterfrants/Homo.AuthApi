@@ -1,17 +1,17 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.EntityFrameworkCore;
 
-namespace Homo.AuthApi
+namespace {namespace}
 {
-    public class GroupDataService
+    public class {firstUpperCamelCaseModelName}Dataservice
     {
-        public static List<Group> GetList(DBContext dbContext, int page, int limit, string name)
+        public static List<{firstUpperCamelCaseModelName}> GetList(DBContext dbContext, int page, int limit)
         {
-            return dbContext.Group
+            return dbContext.{firstUpperCamelCaseModelName}
                 .Where(x =>
                     x.DeletedAt == null
-                    && (name == null || x.Name.Contains(name))
                 )
                 .OrderByDescending(x => x.Id)
                 .Skip(limit * (page - 1))
@@ -19,34 +19,32 @@ namespace Homo.AuthApi
                 .ToList();
         }
 
-        public static List<Group> GetAll(DBContext dbContext, string name)
+        public static List<{firstUpperCamelCaseModelName}> GetAll(DBContext dbContext)
         {
-            return dbContext.Group
+            return dbContext.{firstUpperCamelCaseModelName}
                 .Where(x =>
                     x.DeletedAt == null
-                    && (name == null || x.Name.Contains(name))
                 )
                 .OrderByDescending(x => x.Id)
                 .ToList();
         }
-        public static int GetRowNum(DBContext dbContext, string name)
+        public static int GetRowNum(DBContext dbContext)
         {
-            return dbContext.Group
+            return dbContext.{firstUpperCamelCaseModelName}
                 .Where(x =>
                     x.DeletedAt == null
-                    && (name == null || x.Name.Contains(name))
                 )
                 .Count();
         }
 
-        public static Group GetOne(DBContext dbContext, long id)
+        public static {firstUpperCamelCaseModelName} GetOne(DBContext dbContext, long id)
         {
-            return dbContext.Group.FirstOrDefault(x => x.DeletedAt == null && x.Id == id);
+            return dbContext.{firstUpperCamelCaseModelName}.FirstOrDefault(x => x.DeletedAt == null && x.Id == id);
         }
 
-        public static Group Create(DBContext dbContext, long createdBy, DTOs.Group dto)
+        public static {firstUpperCamelCaseModelName} Create(DBContext dbContext, long createdBy, DTOs.{firstUpperCamelCaseModelName} dto)
         {
-            Group record = new Group();
+            {firstUpperCamelCaseModelName} record = new {firstUpperCamelCaseModelName}();
             foreach (var propOfDTO in dto.GetType().GetProperties())
             {
                 var value = propOfDTO.GetValue(dto);
@@ -54,26 +52,26 @@ namespace Homo.AuthApi
                 prop.SetValue(record, value);
             }
             record.CreatedBy = createdBy;
-            dbContext.Group.Add(record);
+            dbContext.{firstUpperCamelCaseModelName}.Add(record);
             dbContext.SaveChanges();
             return record;
         }
 
-        public static void BatchDelete(DBContext dbContext, long editedBy, List<long?> ids)
+        public static void BatchDelete(DBContext dbContext, long editedBy, List<long> ids)
         {
-            foreach (int id in ids)
+            foreach (long id in ids)
             {
-                Group record = new Group { Id = id };
-                dbContext.Attach<Group>(record);
+                {firstUpperCamelCaseModelName} record = new {firstUpperCamelCaseModelName} { Id = id };
+                dbContext.Attach<{firstUpperCamelCaseModelName}>(record);
                 record.DeletedAt = DateTime.Now;
                 record.EditedBy = editedBy;
             }
             dbContext.SaveChanges();
         }
 
-        public static void Update(DBContext dbContext, int id, long editedBy, DTOs.Group dto)
+        public static void Update(DBContext dbContext, long id, long editedBy, DTOs.{firstUpperCamelCaseModelName} dto)
         {
-            Group record = dbContext.Group.Where(x => x.Id == id).FirstOrDefault();
+            {firstUpperCamelCaseModelName} record = dbContext.{firstUpperCamelCaseModelName}.Where(x => x.Id == id).FirstOrDefault();
             foreach (var propOfDTO in dto.GetType().GetProperties())
             {
                 var value = propOfDTO.GetValue(dto);
@@ -87,7 +85,7 @@ namespace Homo.AuthApi
 
         public static void Delete(DBContext dbContext, long id, long editedBy)
         {
-            Group record = dbContext.Group.Where(x => x.Id == id).FirstOrDefault();
+            {firstUpperCamelCaseModelName} record = dbContext.{firstUpperCamelCaseModelName}.Where(x => x.Id == id).FirstOrDefault();
             record.DeletedAt = DateTime.Now;
             record.EditedBy = editedBy;
             dbContext.SaveChanges();

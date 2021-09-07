@@ -52,7 +52,7 @@ namespace {namespace}
 
         [HttpGet]
         [Route("{id}")]
-        public ActionResult<dynamic> get([FromRoute] int id, dynamic extraPayload)
+        public ActionResult<dynamic> get([FromRoute] int id, Homo.AuthApi.DTOs.JwtExtraPayload extraPayload)
         {
             {firstUpperCamelCaseModelName} record = {firstUpperCamelCaseModelName}Dataservice.GetOne(_dbContext, id); 
             if (record == null)
@@ -64,7 +64,7 @@ namespace {namespace}
 
         [HttpPatch]
         [Route("{id}")]
-        public ActionResult<dynamic> update([FromRoute] int id, [FromBody] DTOs.{firstUpperCamelCaseModelName} dto, dynamic extraPayload)
+        public ActionResult<dynamic> update([FromRoute] int id, [FromBody] DTOs.{firstUpperCamelCaseModelName} dto, Homo.AuthApi.DTOs.JwtExtraPayload extraPayload)
         {
             long editedBy = extraPayload.Id;
             {firstUpperCamelCaseModelName}Dataservice.Update(_dbContext, id, editedBy, dto);
@@ -73,7 +73,7 @@ namespace {namespace}
 
         [HttpDelete]
         [Route("{id}")]
-        public ActionResult<dynamic> delete([FromRoute] long id, dynamic extraPayload)
+        public ActionResult<dynamic> delete([FromRoute] long id, Homo.AuthApi.DTOs.JwtExtraPayload extraPayload)
         {
             long editedBy = extraPayload.Id;
             {firstUpperCamelCaseModelName}Dataservice.Delete(_dbContext, id, editedBy);

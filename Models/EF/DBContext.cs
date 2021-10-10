@@ -21,6 +21,43 @@ namespace Homo.AuthApi
             base.OnModelCreating(modelBuilder);
 
             OnModelCreatingPartial(modelBuilder);
+
+            modelBuilder.Entity<User>(entity =>
+            {
+                entity.HasIndex(p => new { p.DeletedAt });
+                entity.HasIndex(p => new { p.Email });
+                entity.HasIndex(p => new { p.Status });
+                entity.HasIndex(p => new { p.IsManager });
+                entity.HasIndex(p => new { p.Username });
+                entity.HasIndex(p => new { p.FirstName });
+                entity.HasIndex(p => new { p.LastName });
+                entity.HasIndex(p => new { p.Gender });
+                entity.HasIndex(p => new { p.County });
+                entity.HasIndex(p => new { p.City });
+            });
+
+            modelBuilder.Entity<Group>(entity =>
+            {
+                entity.HasIndex(p => new { p.DeletedAt });
+                entity.HasIndex(p => new { p.Name });
+                entity.HasIndex(p => new { p.Roles });
+            });
+
+            modelBuilder.Entity<VerifyCode>(entity =>
+            {
+                entity.HasIndex(p => new { p.Expiration });
+                entity.HasIndex(p => new { p.Code });
+                entity.HasIndex(p => new { p.Ip });
+                entity.HasIndex(p => new { p.Phone });
+                entity.HasIndex(p => new { p.Email });
+                entity.HasIndex(p => new { p.IsUsed });
+            });
+
+            modelBuilder.Entity<RelationOfGroupAndUser>(entity =>
+            {
+                entity.HasIndex(p => new { p.UserId });
+                entity.HasIndex(p => new { p.GroupId });
+            });
         }
 
         partial void OnModelCreatingPartial(ModelBuilder modelBuilder);

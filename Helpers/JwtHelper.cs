@@ -52,9 +52,14 @@ namespace Homo.AuthApi
 
         public static DTOs.JwtExtraPayload GetExtraPayload(string key, string token)
         {
+            JwtSecurityTokenHandler tokenHandler = new JwtSecurityTokenHandler();
+
+            if (!tokenHandler.CanReadToken(token))
+            {
+                return null;
+            }
             try
             {
-                JwtSecurityTokenHandler tokenHandler = new JwtSecurityTokenHandler();
                 JwtSecurityToken jwtToken = (JwtSecurityToken)tokenHandler.ReadToken(token);
                 byte[] byteArrayOfKey = Encoding.UTF8.GetBytes(key);
                 TokenValidationParameters parameters = new TokenValidationParameters()
